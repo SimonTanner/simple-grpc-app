@@ -1,4 +1,4 @@
-module github.com/SimonTanner/simple-grpc-app
+module github.com/SimonTanner/simple-grpc-app/frontend
 
 go 1.14
 
