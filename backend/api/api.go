@@ -4,16 +4,22 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/SimonTanner/simple-grpc-app/backend/bookings"
 	pb "github.com/SimonTanner/simple-grpc-app/bookings"
+	"github.com/jmoiron/sqlx"
 )
 
 type Api struct {
 	pb.UnimplementedBookingsApiServer
+	dbService  bookings.Service
 	properties []*pb.Property
 }
 
-func New() *Api {
-	api := &Api{}
+func New(db *sqlx.DB) *Api {
+
+	api := &Api{
+		dbService: bookings.New(db),
+	}
 	return api
 }
 
