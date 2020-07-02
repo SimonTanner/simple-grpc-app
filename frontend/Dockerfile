@@ -6,11 +6,11 @@ ADD . .
 
 RUN ls -la
 
-WORKDIR /app
+WORKDIR /app/frontend/
 
 RUN go mod download
 
-RUN CGO_ENABLED=0 go build
+RUN CGO_ENABLED=0 go build -o frontend
 
 RUN ls -la
 
@@ -20,7 +20,7 @@ RUN apk add --update --no-cache ca-certificates
 
 WORKDIR /app
 
-COPY --from=builder /app/frontend /app/
+COPY --from=builder /app/frontend/frontend /app/
 
 EXPOSE 8080
 
