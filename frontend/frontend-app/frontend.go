@@ -28,7 +28,7 @@ func (f *Frontend) Start(address string) error {
 
 func Hello(c echo.Context) error {
 	response := Response{
-		Msg:       "Hello You!",
+		Msg:       "Welcome to Book My Place!",
 		TimeStamp: time.Now(),
 	}
 

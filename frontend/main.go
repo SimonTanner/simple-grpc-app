@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/SimonTanner/simple-grpc-app/frontend/frontend-app"
 )
@@ -12,7 +12,6 @@ func main() {
 	err := frontend.Start(":8080")
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
-
 }
