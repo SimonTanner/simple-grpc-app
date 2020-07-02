@@ -3,6 +3,7 @@ package frontend
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -56,13 +57,24 @@ func (frontend *Frontend) GetProperties(c echo.Context) error {
 		return err
 	}
 
-	props, _ := stream.Recv()
+	propertiesResult := []*bookings.Property{}
 
-	log.Println(props)
-	// for _, prop := range props {
+	for {
+		prop, err := stream.Recv()
+		log.Println(prop)
 
-	// }
-	fmt.Printf("%+v\n", props)
+		if err == io.EOF {
+			break
+		}
 
-	return c.JSON(http.StatusOK, props)
+		if err != nil {
+			log.Printf("Error receiving properties from stream %v", err)
+		}
+
+		propertiesResult = append(propertiesResult, prop)
+	}
+
+	fmt.Printf("%+v\n", propertiesResult)
+
+	return c.JSON(http.StatusOK, propertiesResult)
 }
