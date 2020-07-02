@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = ".;bookings";
+
+package api;
+
+service BookingsApi {
+    rpc GetAllProperties(Property) returns (stream Property) {}
+}
+
+
+
+message Property {
+    int32 id = 1;
+    string doorNumber = 2;
+    string address = 3;
+    string city  = 4;
+    string country = 5;
+}
