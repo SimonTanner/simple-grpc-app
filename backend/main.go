@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	pb "github.com/SimonTanner/simple-grpc-app/backend/bookings"
+	pb "github.com/SimonTanner/simple-grpc-app/bookings"
 
 	"github.com/SimonTanner/simple-grpc-app/backend/api"
 
@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	port = 8080
+	port = 8090
 )
 
 func main() {

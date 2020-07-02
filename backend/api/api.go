@@ -1,10 +1,10 @@
 package api
 
 import (
-	"context"
+	"fmt"
 	"log"
 
-	pb "github.com/SimonTanner/simple-grpc-app/backend/bookings"
+	pb "github.com/SimonTanner/simple-grpc-app/bookings"
 )
 
 type Api struct {
@@ -17,11 +17,20 @@ func New() *Api {
 	return api
 }
 
-func (a *Api) GetProperties(c context.Context, p *pb.Property, stream pb.BookingsApi_GetAllPropertiesServer) error {
+func (a *Api) GetAllProperties(p *pb.Property, stream pb.BookingsApi_GetAllPropertiesServer) error {
 
 	log.Println(p)
-	property := pb.Property{}
+	log.Println("Getting properties")
+	property := pb.Property{
+		Id:         123,
+		DoorNumber: "23",
+		Address:    "Cadogan Terrace",
+		City:       "London",
+		Country:    "UK",
+	}
 	properties := []*pb.Property{&property}
+
+	fmt.Println(properties)
 
 	for _, prop := range properties {
 		if err := stream.Send(prop); err != nil {
