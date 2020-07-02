@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	pb "bookings"
+	pb "github.com/SimonTanner/simple-grpc-app/backend/bookings"
 )
 
 type Api struct {
@@ -20,11 +20,11 @@ func New() *Api {
 func (a *Api) GetProperties(c context.Context, p *pb.Property, stream pb.BookingsApi_GetAllPropertiesServer) error {
 
 	log.Println(p)
-	properties := [
-		&pb.Property{},
-	]
-	for _, property := range properties {
-		if err := stream.Send(); err != nil {
+	property := pb.Property{}
+	properties := []*pb.Property{&property}
+
+	for _, prop := range properties {
+		if err := stream.Send(prop); err != nil {
 			return err
 		}
 	}
