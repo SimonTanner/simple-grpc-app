@@ -27,18 +27,34 @@ func (a *Api) GetAllProperties(p *pb.Property, stream pb.BookingsApi_GetAllPrope
 
 	log.Println(p)
 	log.Println("Getting properties")
-	property := pb.Property{
-		Id:         123,
-		DoorNumber: "23",
-		Address:    "Cadogan Terrace",
-		City:       "London",
-		Country:    "UK",
-	}
-	properties := []*pb.Property{&property}
+	properties, err := a.dbService.GetAllProperties()
 
 	fmt.Println(properties)
 
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	grpcProps := []*pb.Property{}
+
 	for _, prop := range properties {
+		grpcProp := pb.Property{
+			Id:         prop.Id,
+			DoorNumber: prop.DoorNumber,
+			Address:    prop.Address,
+			City:       prop.City,
+			Country:    prop.Country,
+		}
+
+		grpcProps = append(grpcProps, &grpcProp)
+	}
+
+	fmt.Println(properties)
+
+	for _, prop := range grpcProps {
+		fmt.Println(fmt.Sprintf("%+v\n", prop))
+
 		if err := stream.Send(prop); err != nil {
 			return err
 		}
