@@ -4,13 +4,15 @@ WORKDIR /app
 
 ADD . .
 
-WORKDIR /app/services/frontend
+RUN ls -la
+
+WORKDIR /app
 
 RUN go mod download
 
-RUN go test -race ./...
+RUN CGO_ENABLED=0 go build
 
-RUN CGO_ENABLED=0 go build -o frontend
+RUN ls -la
 
 FROM alpine
 
@@ -18,7 +20,7 @@ RUN apk add --update --no-cache ca-certificates
 
 WORKDIR /app
 
-COPY --from=builder /app/services/frontend/frontend /app/
+COPY --from=builder /app/frontend /app/
 
 EXPOSE 8080
 
