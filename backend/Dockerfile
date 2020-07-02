@@ -6,7 +6,7 @@ ADD . .
 
 RUN ls -la
 
-WORKDIR /app
+WORKDIR /app/backend
 
 RUN go mod download
 
@@ -20,8 +20,12 @@ RUN apk add --update --no-cache ca-certificates
 
 WORKDIR /app
 
-COPY --from=builder /app/backend /app/
+COPY --from=builder /app/backend/backend /app/
+
+COPY --from=builder /app/db/wait-for.sh /app/
+
+RUN chmod +x ./wait-for.sh
 
 EXPOSE 8090
 
-ENTRYPOINT ./api 
+ENTRYPOINT ./backend 
