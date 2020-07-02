@@ -13,7 +13,7 @@ func New(db *sqlx.DB) Service {
 }
 
 func (s Service) GetAllProperties() ([]Property, error) {
-	properties := []Property{}
+	var properties []Property
 
 	const query = `
 	SELECT
@@ -24,7 +24,7 @@ func (s Service) GetAllProperties() ([]Property, error) {
 		country,
 		created_at
 	FROM
-		bookings.property;
+		bookings.properties;
 	`
 
 	err := s.db.Select(&properties, query)
