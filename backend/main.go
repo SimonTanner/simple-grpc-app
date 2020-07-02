@@ -11,13 +11,14 @@ import (
 
 	"github.com/SimonTanner/simple-grpc-app/backend/api"
 
+	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 )
 
 const (
 	port   = 8090
 	dbPort = 5432
-	host   = "frontend"
+	host   = "api"
 )
 
 func main() {
