@@ -12,10 +12,11 @@ import (
 const (
 	port        = 8080
 	backendPort = 8090
+	host        = "api"
 )
 
 func main() {
-	conn, err := grpc.Dial(fmt.Sprintf("localhost:%d", backendPort), grpc.WithInsecure())
+	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", host, backendPort), grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("fail to dial: %v", err)
 	}
