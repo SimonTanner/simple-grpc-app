@@ -48,10 +48,21 @@ func Hello(c echo.Context) error {
 func (frontend *Frontend) GetProperties(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
+	propertyParams := bookings.Property{}
+
+	if c.QueryParam("country") != "" {
+		log.Println(c.QueryParam("country"))
+		propertyParams.Country = c.QueryParam("country")
+	}
+
+	if c.QueryParam("city") != "" {
+		log.Println(c.QueryParam("city"))
+		propertyParams.City = c.QueryParam("city")
+	}
 
 	log.Println("Getting properties from backend")
 
-	stream, err := frontend.client.GetAllProperties(ctx, &bookings.Property{})
+	stream, err := frontend.client.GetAllProperties(ctx, &propertyParams)
 
 	if err != nil {
 		log.Println(err)

@@ -1,8 +1,11 @@
 package bookings
 
 import (
+	"fmt"
+	"log"
 	"time"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
@@ -17,24 +20,39 @@ func New(db *sqlx.DB) Service {
 	}
 }
 
-func (s Service) GetAllProperties() ([]Property, error) {
+func (s Service) GetAllProperties(params PropertyParams) ([]Property, error) {
 	var properties []Property
 
-	const query = `
-	SELECT
-		id,
-		door_number,
-		address,
-		city,
-		country,
-		created_at
-	FROM
-		bookings.properties;
-	`
+	log.Println(fmt.Sprintf("query params: %+v\n", params))
 
-	err := s.db.Select(&properties, query)
+	expr := sq.Select(
+		"id",
+		"door_number",
+		"address",
+		"city",
+		"country",
+		"created_at").
+		From("bookings.properties")
+
+	if params.City != "" {
+		expr = expr.Where(sq.Eq{"city": params.City})
+	}
+
+	if params.Country != "" {
+		expr = expr.Where(sq.Eq{"country": params.Country})
+	}
+
+	query, args, err := expr.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
-		return nil, err
+		return properties, err
+	}
+
+	log.Println(query)
+	log.Println(args)
+
+	err = s.db.Select(&properties, query, args...)
+	if err != nil {
+		return properties, err
 	}
 
 	return properties, nil

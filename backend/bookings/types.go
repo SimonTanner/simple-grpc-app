@@ -31,6 +31,11 @@ type Booking struct {
 	CreatedAt  time.Time `db:"created_at"`
 }
 
+type PropertyParams struct {
+	City    string `json:"city"`
+	Country string `json:"country"`
+}
+
 func (user User) ConvertUserToMsg() (*pb.User, error) {
 	createdAt, err := ptypes.TimestampProto(user.CreatedAt)
 	if err != nil {

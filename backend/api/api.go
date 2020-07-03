@@ -28,7 +28,13 @@ func (a *Api) GetAllProperties(p *pb.Property, stream pb.BookingsApi_GetAllPrope
 
 	log.Println(p)
 	log.Println("Getting properties")
-	properties, err := a.dbService.GetAllProperties()
+
+	params := bookings.PropertyParams{
+		City:    p.City,
+		Country: p.Country,
+	}
+
+	properties, err := a.dbService.GetAllProperties(params)
 
 	fmt.Println(properties)
 
@@ -121,6 +127,7 @@ func (a *Api) BookPropertyById(ctx context.Context, booking *pb.Booking) (*pb.Us
 		Property: pbProperty,
 		Booking:  pbBooking,
 	}
+	log.Println(fmt.Sprintf("%+v\n", bookingDetails))
 
 	return bookingDetails, nil
 }
