@@ -40,7 +40,7 @@ func (s Service) GetAllProperties() ([]Property, error) {
 	return properties, nil
 }
 
-func (s Service) BookPropertyById(propertyId, userId int32, startDate, endDate time.Time) (User, Booking, Property, error) {
+func (s Service) BookPropertyById(propertyId int, userId int, startDate time.Time, endDate time.Time) (User, Booking, Property, error) {
 	insertBooking := `
 	INSERT INTO bookings.durations(property_id, user_id, start_date, end_date)
 	VALUES
@@ -48,13 +48,6 @@ func (s Service) BookPropertyById(propertyId, userId int32, startDate, endDate t
 	RETURNING *;
 	`
 
-	userQuery := `
-	SELECT * FROM bookings.users WHERE id = :id;
-	`
-
-	propertyQuery := `
-	SELECT * FROM bookings.properties WHERE id = :id;
-	`
 	var (
 		booking  Booking
 		user     User
@@ -87,30 +80,99 @@ func (s Service) BookPropertyById(propertyId, userId int32, startDate, endDate t
 		return User{}, Booking{}, Property{}, err
 	}
 
-	stmt, err = trans.PrepareNamed(userQuery)
-	if err != nil {
-		return User{}, Booking{}, Property{}, err
-	}
-
-	err = stmt.Select(&user, &userId)
-	if err != nil {
-		return User{}, Booking{}, Property{}, err
-	}
-
-	stmt, err = trans.PrepareNamed(propertyQuery)
-	if err != nil {
-		return User{}, Booking{}, Property{}, err
-	}
-
-	err = stmt.Select(&property, &propertyId)
-	if err != nil {
-		return User{}, Booking{}, Property{}, err
-	}
-
 	err = trans.Commit()
 	if err != nil {
 		return User{}, Booking{}, Property{}, err
 	}
 
+	property, err = s.GetPropertyByID(propertyId)
+	if err != nil {
+		return User{}, Booking{}, Property{}, err
+	}
+
+	user, err = s.GetUserByID(userId)
+	if err != nil {
+		return User{}, Booking{}, Property{}, err
+	}
+
 	return user, booking, property, nil
+}
+
+func (s Service) GetPropertyByID(propertyId int) (Property, error) {
+	type propByID struct {
+		ID int `db:"id"`
+	}
+
+	propertyQuery := `
+	SELECT * FROM bookings.properties WHERE id = :id;
+	`
+	var property Property
+
+	trans, err := s.db.Beginx()
+	if err != nil {
+		return Property{}, err
+	}
+
+	defer trans.Rollback() //nolint:errcheck
+
+	stmt, err := trans.PrepareNamed(propertyQuery)
+
+	if err != nil {
+		return Property{}, err
+	}
+
+	tempProperty := propByID{
+		ID: propertyId,
+	}
+
+	err = stmt.Get(&property, tempProperty)
+	if err != nil {
+		return Property{}, err
+	}
+
+	err = trans.Commit()
+	if err != nil {
+		return Property{}, err
+	}
+
+	return property, nil
+}
+
+func (s Service) GetUserByID(userId int) (User, error) {
+	type userByID struct {
+		ID int `db:"id"`
+	}
+
+	userQuery := `
+	SELECT * FROM bookings.users WHERE id = :id;
+	`
+	var user User
+
+	trans, err := s.db.Beginx()
+	if err != nil {
+		return User{}, err
+	}
+
+	defer trans.Rollback() //nolint:errcheck
+
+	stmt, err := trans.PrepareNamed(userQuery)
+	if err != nil {
+		return User{}, err
+	}
+
+	tempUser := userByID{
+		ID: userId,
+	}
+
+	err = stmt.Get(&user, tempUser)
+	if err != nil {
+		return User{}, err
+	}
+
+	err = trans.Commit()
+	if err != nil {
+		return User{}, err
+	}
+
+	return user, nil
 }
