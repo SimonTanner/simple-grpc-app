@@ -25,6 +25,7 @@ func New(client bookings.BookingsApiClient) *Frontend {
 
 	frontend.e.GET("/", Hello)
 	frontend.e.GET("/properties", frontend.GetProperties)
+	frontend.e.POST("/booking", frontend.CreateBooking)
 
 	return &frontend
 }
@@ -78,3 +79,53 @@ func (frontend *Frontend) GetProperties(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, propertiesResult)
 }
+
+func (frontend *Frontend) CreateBooking(c echo.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var booking BookingRequest
+
+	err := c.Bind(booking)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	bookingMsg, err := booking.convertBookingToMsg()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	log.Println("Sending booking to backend")
+
+	bookingCrtdMsg, err := frontend.client.BookPropertyById(ctx, bookingMsg)
+	if err != nil {
+		log.Println(fmt.Sprintf("Error creating booking details: %v", err))
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	bookingResp, err := createBookingResponse(bookingCrtdMsg)
+	if err != nil {
+		log.Println(fmt.Sprintf("Error converting booking details: %v", err))
+		return c.JSON(http.StatusInternalServerErrors, err)
+	}
+
+	return c.JSON(http.StatusCreated, bookingResp)
+}
+
+// func get() {
+// 	userId, err := c.Param("userId")
+// 	if err != nil {
+// 		return c.JSON(http.StatusBadRequest, err)
+// 	}
+
+// 	prop, err := c.Param("userId")
+// 	if err != nil {
+// 		return c.JSON(http.StatusBadRequest, err)
+// 	}
+
+// 	userId, err := c.Param("userId")
+// 	if err != nil {
+// 		return c.JSON(http.StatusBadRequest, err)
+// 	}
+// }
