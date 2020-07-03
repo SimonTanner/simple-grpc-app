@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -61,4 +62,55 @@ func (a *Api) GetAllProperties(p *pb.Property, stream pb.BookingsApi_GetAllPrope
 	}
 
 	return nil
+}
+
+func (a *Api) BookPropertyById(ctx context.Context, booking *pb.Booking) (*pb.UserPropertyBooking, error) {
+	log.Println(
+		fmt.Sprintf(
+			"Recieved booking request User Id: %d, PropertyId: %d",
+			booking.UserId,
+			booking.PropertyId,
+		),
+	)
+
+	user, newBooking, property, err := a.dbService.BookPropertyById(
+		booking.PropertyId,
+		booking.UserId,
+		booking.StartDate.AsTime(),
+		booking.EndDate.AsTime(),
+	)
+
+	var (
+		pbUser         *pb.User
+		pbBooking      *pb.Booking
+		pbProperty     *pb.Property
+		bookingDetails *pb.UserPropertyBooking
+	)
+
+	if err != nil {
+		return bookingDetails, err
+	}
+
+	pbUser, err = user.ConvertUserToMsg()
+	if err != nil {
+		return bookingDetails, err
+	}
+
+	pbBooking, err = newBooking.ConverPropertyToMsg()
+	if err != nil {
+		return bookingDetails, err
+	}
+
+	pbProperty, err = property.ConverPropertyToMsg()
+	if err != nil {
+		return bookingDetails, err
+	}
+
+	bookingDetails = &pb.UserPropertyBooking{
+		User:     pbUser,
+		Property: pbProperty,
+		Booking:  pbBooking,
+	}
+
+	return bookingDetails, nil
 }
