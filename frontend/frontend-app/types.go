@@ -22,9 +22,9 @@ type BookingRequest struct {
 type BookingResponse struct {
 	Property  Property  `json:"property"`
 	User      User      `json:"user"`
-	StartDate time.Time `json:"startDate:omitempty"`
-	EndDate   time.Time `json:"endDate:omitempty"`
-	CreatedAt time.Time `json:"createdAt:omitempty"`
+	StartDate time.Time `json:"startDate,omitempty"`
+	EndDate   time.Time `json:"endDate,omitempty"`
+	CreatedAt time.Time `json:"createdAt,omitempty"`
 }
 
 type Property struct {
@@ -78,8 +78,11 @@ func createBookingResponse(bk *pb.UserPropertyBooking) (BookingResponse, error) 
 	}
 
 	booking := BookingResponse{
-		Property: property,
-		User:     user,
+		Property:  property,
+		User:      user,
+		StartDate: bk.Booking.StartDate.AsTime(),
+		EndDate:   bk.Booking.EndDate.AsTime(),
+		CreatedAt: bk.Booking.CreatedAt.AsTime(),
 	}
 
 	return booking, nil
