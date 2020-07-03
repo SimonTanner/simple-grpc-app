@@ -1,14 +1,15 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 option go_package = ".;bookings";
 
 package api;
 
 service BookingsApi {
     rpc GetAllProperties(Property) returns (stream Property) {}
+    rpc BookPropertyById(Booking) returns (UserPropertyBooking) {}
 }
-
-
 
 message Property {
     int32 id = 1;
@@ -16,4 +17,26 @@ message Property {
     string address = 3;
     string city  = 4;
     string country = 5;
+    google.protobuf.Timestamp createdAt = 6;
+}
+
+message User {
+    int32     id = 1;
+	string    first_name = 2;
+	string    surname = 3;
+	google.protobuf.Timestamp createdAt = 4;
+}
+
+message Booking {
+	int32     propertyId = 1;
+	int32     userId = 2;
+	google.protobuf.Timestamp startDate = 3;
+	google.protobuf.Timestamp endDate = 4;
+	google.protobuf.Timestamp CreatedAt = 5;
+}
+
+message UserPropertyBooking {
+    User user = 1;
+    Property property = 2;
+    Booking booking = 3;
 }
