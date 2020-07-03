@@ -96,12 +96,12 @@ func (a *Api) BookPropertyById(ctx context.Context, booking *pb.Booking) (*pb.Us
 		return bookingDetails, err
 	}
 
-	pbBooking, err = newBooking.ConverPropertyToMsg()
+	pbBooking, err = newBooking.ConvertBookingToMsg()
 	if err != nil {
 		return bookingDetails, err
 	}
 
-	pbProperty, err = property.ConverPropertyToMsg()
+	pbProperty, err = property.ConvertPropertyToMsg()
 	if err != nil {
 		return bookingDetails, err
 	}

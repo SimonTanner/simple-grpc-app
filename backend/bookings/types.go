@@ -47,7 +47,7 @@ func (user User) ConvertUserToMsg() (*pb.User, error) {
 	return &userMsg, nil
 }
 
-func (prop Property) ConverPropertyToMsg() (*pb.Property, error) {
+func (prop Property) ConvertPropertyToMsg() (*pb.Property, error) {
 	createdAt, err := ptypes.TimestampProto(prop.CreatedAt)
 	if err != nil {
 		return &pb.Property{}, err
@@ -65,7 +65,7 @@ func (prop Property) ConverPropertyToMsg() (*pb.Property, error) {
 	return &propertyMsg, nil
 }
 
-func (b Booking) ConverPropertyToMsg() (*pb.Booking, error) {
+func (b Booking) ConvertBookingToMsg() (*pb.Booking, error) {
 	startDate, err := ptypes.TimestampProto(b.StartDate)
 	if err != nil {
 		return &pb.Booking{}, err
