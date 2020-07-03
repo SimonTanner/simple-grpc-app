@@ -22,7 +22,7 @@ message Property {
 
 message User {
     int32     id = 1;
-	string    first_name = 2;
+	string    firstName = 2;
 	string    surname = 3;
 	google.protobuf.Timestamp createdAt = 4;
 }
