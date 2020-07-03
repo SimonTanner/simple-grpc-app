@@ -8,7 +8,7 @@ import (
 )
 
 type Property struct {
-	Id         int32     `db:"id"`
+	Id         int       `db:"id"`
 	DoorNumber string    `db:"door_number"`
 	Address    string    `db:"address"`
 	City       string    `db:"city"`
@@ -17,15 +17,15 @@ type Property struct {
 }
 
 type User struct {
-	Id        int32     `db:"id"`
+	Id        int       `db:"id"`
 	FirstName string    `db:"first_name"`
 	Surname   string    `db:"surname"`
 	CreatedAt time.Time `db:"created_at"`
 }
 
 type Booking struct {
-	PropertyId int32     `db:"property_id"`
-	UserId     int32     `db:"user_id"`
+	PropertyId int       `db:"property_id"`
+	UserId     int       `db:"user_id"`
 	StartDate  time.Time `db:"start_date"`
 	EndDate    time.Time `db:"end_date"`
 	CreatedAt  time.Time `db:"created_at"`
@@ -38,7 +38,7 @@ func (user User) ConvertUserToMsg() (*pb.User, error) {
 	}
 
 	userMsg := pb.User{
-		Id:        user.Id,
+		Id:        int32(user.Id),
 		FirstName: user.FirstName,
 		Surname:   user.Surname,
 		CreatedAt: createdAt,
@@ -54,7 +54,7 @@ func (prop Property) ConvertPropertyToMsg() (*pb.Property, error) {
 	}
 
 	propertyMsg := pb.Property{
-		Id:         prop.Id,
+		Id:         int32(prop.Id),
 		DoorNumber: prop.DoorNumber,
 		Address:    prop.Address,
 		City:       prop.City,
@@ -82,8 +82,8 @@ func (b Booking) ConvertBookingToMsg() (*pb.Booking, error) {
 	}
 
 	bookingMsg := pb.Booking{
-		PropertyId: b.PropertyId,
-		UserId:     b.UserId,
+		PropertyId: int32(b.PropertyId),
+		UserId:     int32(b.UserId),
 		StartDate:  startDate,
 		EndDate:    endDate,
 		CreatedAt:  createdAt,

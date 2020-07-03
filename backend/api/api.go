@@ -41,7 +41,7 @@ func (a *Api) GetAllProperties(p *pb.Property, stream pb.BookingsApi_GetAllPrope
 
 	for _, prop := range properties {
 		grpcProp := pb.Property{
-			Id:         prop.Id,
+			Id:         int32(prop.Id),
 			DoorNumber: prop.DoorNumber,
 			Address:    prop.Address,
 			City:       prop.City,
@@ -74,8 +74,8 @@ func (a *Api) BookPropertyById(ctx context.Context, booking *pb.Booking) (*pb.Us
 	)
 
 	user, newBooking, property, err := a.dbService.BookPropertyById(
-		booking.PropertyId,
-		booking.UserId,
+		int(booking.PropertyId),
+		int(booking.UserId),
 		booking.StartDate.AsTime(),
 		booking.EndDate.AsTime(),
 	)
