@@ -88,8 +88,18 @@ func (a *Api) BookPropertyById(ctx context.Context, booking *pb.Booking) (*pb.Us
 	)
 
 	if err != nil {
+		log.Println(fmt.Sprintf("Error saving to database: %v", err))
 		return bookingDetails, err
 	}
+
+	log.Println(
+		fmt.Sprintf(
+			"Created Booking User Id: %d, PropertyId: %d booking: %v",
+			booking.UserId,
+			booking.PropertyId,
+			newBooking,
+		),
+	)
 
 	pbUser, err = user.ConvertUserToMsg()
 	if err != nil {
