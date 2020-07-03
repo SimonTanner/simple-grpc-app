@@ -3,8 +3,8 @@ package frontend
 import (
 	"time"
 
-	"github.com/golang/protobuf/ptypes"
 	pb "github.com/SimonTanner/simple-grpc-app/bookings"
+	"github.com/golang/protobuf/ptypes"
 )
 
 type Response struct {
@@ -17,7 +17,6 @@ type BookingRequest struct {
 	UserId     int32     `json:"userId"`
 	StartDate  time.Time `json:"startDate"`
 	EndDate    time.Time `json:"endDate"`
-	CreatedAt  time.Time `json:"createdAt"`
 }
 
 type BookingResponse struct {
@@ -53,19 +52,11 @@ func (b BookingRequest) convertBookingToMsg() (*pb.Booking, error) {
 		return &pb.Booking{}, err
 	}
 
-	createdAt, err := ptypes.TimestampProto(b.CreatedAt)
-	if err != nil {
-		return &pb.Booking{}, err
-	}
-
-	// var bookingMsg pb.Booking
-
 	bookingMsg := pb.Booking{
 		PropertyId: b.PropertyId,
 		UserId:     b.UserId,
 		StartDate:  startDate,
 		EndDate:    endDate,
-		CreatedAt:  createdAt,
 	}
 
 	return &bookingMsg, nil
@@ -88,7 +79,7 @@ func createBookingResponse(bk *pb.UserPropertyBooking) (BookingResponse, error) 
 
 	booking := BookingResponse{
 		Property: property,
-		User: user,s
+		User:     user,
 	}
 
 	return booking, nil

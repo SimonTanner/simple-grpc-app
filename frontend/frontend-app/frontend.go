@@ -84,9 +84,9 @@ func (frontend *Frontend) CreateBooking(c echo.Context) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	var booking BookingRequest
+	booking := BookingRequest{}
 
-	err := c.Bind(booking)
+	err := c.Bind(&booking)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
@@ -107,7 +107,7 @@ func (frontend *Frontend) CreateBooking(c echo.Context) error {
 	bookingResp, err := createBookingResponse(bookingCrtdMsg)
 	if err != nil {
 		log.Println(fmt.Sprintf("Error converting booking details: %v", err))
-		return c.JSON(http.StatusInternalServerErrors, err)
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	return c.JSON(http.StatusCreated, bookingResp)
