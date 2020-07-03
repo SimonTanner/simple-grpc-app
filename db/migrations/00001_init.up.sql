@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS bookings.properties (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS bookings.duration (
+CREATE TABLE IF NOT EXISTS bookings.durations (
     property_id INTEGER NOT NULL REFERENCES bookings.properties(id),
     user_id INTEGER NOT NULL REFERENCES bookings.users(id),
     start_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
