@@ -34,7 +34,8 @@ http://localhost:8080/properties?country=Spain
 
 The resulting json response body would be returned (abbreviated):
 
-`[
+```json
+[
   {
     "id": 6,
     "doorNumber": "16",
@@ -56,7 +57,8 @@ The resulting json response body would be returned (abbreviated):
     "city": "Alicante",
     "country": "Spain"
   }...
-]`
+]
+```
 
 You can also making a booking by sending a post request to:
 
@@ -66,16 +68,19 @@ the request should have `Content-Type: application/json` in the header.
 
 An example would request body would be:
 
-`{
+```json
+{
 	"propertyId": 6,
 	"userId": 2,
 	"startDate": "2020-07-20T13:17:49.5197009Z",
 	"endDate": "2020-07-27T13:17:49.5197009Z"
-}`
+}
+```
 
 The response would have http status code **201**, and the example response would look like:
 
-`{
+```json
+{
   "property": {
     "id": 6,
     "doorNumber": "16",
@@ -91,4 +96,5 @@ The response would have http status code **201**, and the example response would
   "startDate": "2020-07-20T13:17:49.519701Z",
   "endDate": "2020-07-27T13:17:49.519701Z",
   "createdAt": "2020-11-14T15:13:21.087881Z"
-}`
+}
+```
