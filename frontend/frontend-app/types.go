@@ -87,3 +87,17 @@ func createBookingResponse(bk *pb.UserPropertyBooking) (BookingResponse, error) 
 
 	return booking, nil
 }
+
+func createUPBMsg(userID, propID, bookingID int) *pb.UserPropertyBooking {
+	return &pb.UserPropertyBooking{
+		User: &pb.User{
+			Id: int32(userID),
+		},
+		Property: &pb.Property{
+			Id: int32(propID),
+		},
+		Booking: &pb.Booking{
+			// Id: int32(bookingID),
+		},
+	}
+}
