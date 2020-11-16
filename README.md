@@ -7,7 +7,9 @@ It's still a work in progress, started whilst on furlough during the summer to a
 ## BookMyPlace is a simple webapp for booking properties ##
 Trying to think of an idea for a project without having one set for you is tough, make it too challenging and you'll achieve a lot less, but too easy and you might loose interest. I chose to develop an AirBnB-esque (cliche I know :) ) to allow users to search for properties and book them. Again simplicity was important as I'd never used grpc (did I say that already??)
 
-This also made it important to try and keep the models simple as in order to get something working it's much easier to start small, so the 3 main models you will find are User, Property & Booking. Then there's a UserPropertyBooking which contains all the data pertaining to a booking.
+This also made it important to try and keep the models simple as in order to get something working it's much easier to start small, so the 3 main models you will find in the database are User, Property & Booking. A Booking represents an actual booking and therefore has a forgein key relationship with a User & a Property.
+
+This is represented bookings.proto with simialar data structures as well as a UserProperty booking which is composed of a User, Property & Booking so that all required data for a booking can be returned, either when creating a booking or retrieving a booking, although the latter is yet to be implemented.
 
 This is a work in progress, bakanced with juggling my numerous other personal projects, such as learning c++, working on a clothing design/software design project, and also a little project I started attempting to write a 3D perspective game for my nephews in Python.
 
