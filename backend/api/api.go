@@ -12,8 +12,8 @@ import (
 
 type Api struct {
 	pb.UnimplementedBookingsApiServer
-	dbService  bookings.Service
-	properties []*pb.Property
+	dbService bookings.Service
+	// properties []*pb.Property
 }
 
 func New(db *sqlx.DB) *Api {

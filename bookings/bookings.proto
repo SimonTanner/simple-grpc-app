@@ -9,6 +9,7 @@ package api;
 service BookingsApi {
     rpc GetAllProperties(Property) returns (stream Property) {}
     rpc BookPropertyById(Booking) returns (UserPropertyBooking) {}
+    rpc GetBookingsByBooking(UserPropertyBooking) returns (UserPropertyBooking) {}
 }
 
 message Property {
@@ -29,10 +30,11 @@ message User {
 
 message Booking {
 	int32     propertyId = 1;
-	int32     userId = 2;
-	google.protobuf.Timestamp startDate = 3;
-	google.protobuf.Timestamp endDate = 4;
-	google.protobuf.Timestamp CreatedAt = 5;
+    int32     userId = 2;
+    int32     id = 3;
+	google.protobuf.Timestamp startDate = 4;
+	google.protobuf.Timestamp endDate = 5;
+	google.protobuf.Timestamp CreatedAt = 6;
 }
 
 message UserPropertyBooking {

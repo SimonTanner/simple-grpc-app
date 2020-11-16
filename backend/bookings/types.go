@@ -26,6 +26,7 @@ type User struct {
 type Booking struct {
 	PropertyId int       `db:"property_id"`
 	UserId     int       `db:"user_id"`
+	ID         int       `db:"user_id"`
 	StartDate  time.Time `db:"start_date"`
 	EndDate    time.Time `db:"end_date"`
 	CreatedAt  time.Time `db:"created_at"`

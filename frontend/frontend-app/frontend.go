@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/SimonTanner/simple-grpc-app/bookings"
@@ -25,6 +26,7 @@ func New(client bookings.BookingsApiClient) *Frontend {
 
 	frontend.e.GET("/", Hello)
 	frontend.e.GET("/properties", frontend.GetProperties)
+	frontend.e.GET("/booking", frontend.GetBooking)
 	frontend.e.POST("/booking", frontend.CreateBooking)
 
 	return &frontend
@@ -66,7 +68,7 @@ func (frontend *Frontend) GetProperties(c echo.Context) error {
 
 	if err != nil {
 		log.Println(err)
-		return err
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	propertiesResult := []*bookings.Property{}
@@ -86,7 +88,7 @@ func (frontend *Frontend) GetProperties(c echo.Context) error {
 		propertiesResult = append(propertiesResult, prop)
 	}
 
-	fmt.Printf("%+v\n", propertiesResult)
+	log.Println("%+v\n", propertiesResult)
 
 	return c.JSON(http.StatusOK, propertiesResult)
 }
@@ -99,12 +101,13 @@ func (frontend *Frontend) CreateBooking(c echo.Context) error {
 
 	err := c.Bind(&booking)
 	if err != nil {
+		log.Println(fmt.Sprintf("Error getting booking details from request: %v", err))
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
 	bookingMsg, err := booking.convertBookingToMsg()
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	log.Println("Sending booking to backend")
@@ -112,7 +115,7 @@ func (frontend *Frontend) CreateBooking(c echo.Context) error {
 	bookingCrtdMsg, err := frontend.client.BookPropertyById(ctx, bookingMsg)
 	if err != nil {
 		log.Println(fmt.Sprintf("Error creating booking details: %v", err))
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	bookingResp, err := createBookingResponse(bookingCrtdMsg)
@@ -122,6 +125,63 @@ func (frontend *Frontend) CreateBooking(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, bookingResp)
+}
+
+func (frontend *Frontend) GetBooking(c echo.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if c.QueryParam("userId") == "" {
+		return c.JSON(http.StatusBadRequest, errNoUserID)
+	}
+
+	log.Println(c.QueryParam("userId"))
+	userID, err := strconv.Atoi(c.QueryParam("userId"))
+	if err != nil {
+		log.Printf("Incorrect type for userId param: %v", userID)
+	}
+
+	if c.QueryParam("propertyId") == "" {
+		return c.JSON(http.StatusBadRequest, errNoPropertyID)
+	}
+
+	log.Println(c.QueryParam("userId"))
+	propertyID, err := strconv.Atoi(c.QueryParam("propertyId"))
+	if err != nil {
+		log.Printf("Incorrect type for propertyId param: %v", propertyID)
+	}
+
+	if c.QueryParam("bookingId") == "" {
+		return c.JSON(http.StatusBadRequest, errNoBookingID)
+	}
+
+	log.Println(c.QueryParam("bookingId"))
+	bookingID, err := strconv.Atoi(c.QueryParam("bookingId"))
+	if err != nil {
+		log.Printf("Incorrect type for bookingId param: %v", bookingID)
+		return c.JSON(http.StatusBadRequest, err)
+	}
+
+	upbMsg := createUPBMsg(userID, propertyID, bookingID)
+
+	upbReceived, err := frontend.client.GetBookingsByBooking(ctx, upbMsg)
+	if err != nil {
+		log.Println(fmt.Sprintf("Error getting booking details from api: %v", err))
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	bkResp, err := createBookingResponse(upbReceived)
+	if err != nil {
+		log.Println(fmt.Sprintf("Error converting booking message to response: %v", err))
+		return c.JSON(http.StatusInternalServerError, err)
+	}
+
+	if bkResp == (BookingResponse{}) {
+		log.Println("No bookiings returned by backend api")
+		return c.JSON(http.StatusInternalServerError, errNoBookings)
+	}
+
+	return c.JSON(http.StatusOK, bkResp)
 }
 
 // func get() {

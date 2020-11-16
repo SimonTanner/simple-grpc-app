@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS bookings.properties (
 );
 
 CREATE TABLE IF NOT EXISTS bookings.durations (
+    id SERIAL PRIMARY KEY,
     property_id INTEGER NOT NULL REFERENCES bookings.properties(id),
     user_id INTEGER NOT NULL REFERENCES bookings.users(id),
     start_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
